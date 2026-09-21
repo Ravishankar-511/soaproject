@@ -1,0 +1,54 @@
+package soa.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import soa.entity.Result;
+import soa.repository.ResultRepository;
+
+@Service
+public class ResultService {
+
+    private final ResultRepository resultRepository;
+
+    public ResultService(ResultRepository resultRepository) {
+        this.resultRepository = resultRepository;
+    }
+
+    public Result addResult(Result result) {
+        return resultRepository.save(result);
+    }
+
+    public List<Result> getAllResults() {
+        return resultRepository.findAll();
+    }
+
+    public Result getResultById(Long id) {
+        return resultRepository.findById(id).orElse(null);
+    }
+
+    public Result updateResult(Long id, Result result) {
+        Result existingResult = resultRepository.findById(id).orElse(null);
+
+        if (existingResult == null) {
+            return null;
+        }
+
+        existingResult.setStudentId(result.getStudentId());
+        existingResult.setSubject(result.getSubject());
+        existingResult.setMarks(result.getMarks());
+        existingResult.setGrade(result.getGrade());
+
+        return resultRepository.save(existingResult);
+    }
+
+    public boolean deleteResult(Long id) {
+        if (!resultRepository.existsById(id)) {
+            return false;
+        }
+
+        resultRepository.deleteById(id);
+        return true;
+    }
+}

@@ -1,0 +1,54 @@
+package soa.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import soa.entity.Attendance;
+import soa.repository.AttendanceRepository;
+
+@Service
+public class AttendanceService {
+
+    private final AttendanceRepository attendanceRepository;
+
+    public AttendanceService(AttendanceRepository attendanceRepository) {
+        this.attendanceRepository = attendanceRepository;
+    }
+
+    public Attendance addAttendance(Attendance attendance) {
+        return attendanceRepository.save(attendance);
+    }
+
+    public List<Attendance> getAllAttendance() {
+        return attendanceRepository.findAll();
+    }
+
+    public Attendance getAttendanceById(Long id) {
+        return attendanceRepository.findById(id).orElse(null);
+    }
+
+    public Attendance updateAttendance(Long id, Attendance attendance) {
+        Attendance existingAttendance =
+                attendanceRepository.findById(id).orElse(null);
+
+        if (existingAttendance == null) {
+            return null;
+        }
+
+        existingAttendance.setStudentId(attendance.getStudentId());
+        existingAttendance.setDate(attendance.getDate());
+        existingAttendance.setStatus(attendance.getStatus());
+
+        return attendanceRepository.save(existingAttendance);
+    }
+
+    public boolean deleteAttendance(Long id) {
+        if (!attendanceRepository.existsById(id)) {
+            return false;
+        }
+
+        attendanceRepository.deleteById(id);
+        return true;
+    }
+}

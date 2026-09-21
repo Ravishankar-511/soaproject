@@ -1,0 +1,77 @@
+package soa.controller;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import soa.entity.Attendance;
+import soa.service.AttendanceService;
+
+@RestController
+@RequestMapping("/attendance")
+public class AttendanceController {
+
+    private final AttendanceService attendanceService;
+
+    public AttendanceController(AttendanceService attendanceService) {
+        this.attendanceService = attendanceService;
+    }
+
+    @PostMapping
+    public Attendance addAttendance(@RequestBody Attendance attendance) {
+        return attendanceService.addAttendance(attendance);
+    }
+
+    @GetMapping
+    public List<Attendance> getAllAttendance() {
+        return attendanceService.getAllAttendance();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Attendance> getAttendanceById(@PathVariable Long id) {
+        Attendance attendance = attendanceService.getAttendanceById(id);
+
+        if (attendance == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(attendance);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Attendance> updateAttendance(
+            @PathVariable Long id,
+            @RequestBody Attendance attendance) {
+
+        Attendance updatedAttendance =
+                attendanceService.updateAttendance(id, attendance);
+
+        if (updatedAttendance == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedAttendance);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAttendance(@PathVariable Long id) {
+
+        if (!attendanceService.deleteAttendance(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok("Attendance deleted successfully");
+    }
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<Object> getStudent(@PathVariable Long studentId) {
+
+        Object student = attendanceService.getStudentFromStudentService(studentId);
+
+        if (student == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(student);
+    }
+}

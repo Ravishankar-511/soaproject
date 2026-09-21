@@ -1,0 +1,65 @@
+package soa.controller;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import soa.entity.Result;
+import soa.service.ResultService;
+
+@RestController
+@RequestMapping("/results")
+public class ResultController {
+
+    private final ResultService resultService;
+
+    public ResultController(ResultService resultService) {
+        this.resultService = resultService;
+    }
+
+    @PostMapping
+    public Result addResult(@RequestBody Result result) {
+        return resultService.addResult(result);
+    }
+
+    @GetMapping
+    public List<Result> getAllResults() {
+        return resultService.getAllResults();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Result> getResultById(@PathVariable Long id) {
+        Result result = resultService.getResultById(id);
+
+        if (result == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Result> updateResult(
+            @PathVariable Long id,
+            @RequestBody Result result) {
+
+        Result updatedResult = resultService.updateResult(id, result);
+
+        if (updatedResult == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedResult);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteResult(@PathVariable Long id) {
+
+        if (!resultService.deleteResult(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok("Result deleted successfully");
+    }
+}
